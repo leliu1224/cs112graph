@@ -38,13 +38,14 @@ public class Friends {
         Scanner sc = new Scanner(new File(file));
                   
         adjLists = new Vertex[sc.nextInt()];//instantiate the array
- 
+        sc.nextLine();
         // read vertices
         for (int v=0; v < adjLists.length; v++) {
-        	String holdLine =  sc.next(); //Hold the entire line
+        	String holdLine =  sc.nextLine(); //Hold the entire line
+        	System.out.println("this is " + holdLine);
         	int lineLocation = holdLine.indexOf('|'); //index of the | in the line
         	if(holdLine.charAt(lineLocation+1) == 'y'){
-        		adjLists[v] = new Vertex(holdLine.substring(0, lineLocation), holdLine.substring(lineLocation+2, holdLine.length()), null);
+        		adjLists[v] = new Vertex(holdLine.substring(0, lineLocation), holdLine.substring(lineLocation+1, holdLine.length()), null);
         	}
         	else
         	{
@@ -53,6 +54,7 @@ public class Friends {
         }
  
         // read edges
+        sc.useDelimiter("|");//change delimiter to |
         while (sc.hasNext()) {
              
             // read vertex names and translate to vertex numbers
@@ -96,12 +98,13 @@ public class Friends {
         Scanner sc = new Scanner(System.in);
         //System.out.print("Enter graph input file name: ");
         //String file = sc.nextLine();
-        String file = "test1";
+        String file = "test2";
         Friends graph = new Friends(file);
         graph.print();
  
     }
  
 }
+
 
 
