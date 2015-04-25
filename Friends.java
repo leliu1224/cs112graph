@@ -16,11 +16,14 @@ class Neighbor {
  
 class Vertex {
     String name;
+    String school;//add school variable for students
     Neighbor adjList;
-    Vertex(String name, Neighbor neighbors) {
+    
+    Vertex(String name, String school, Neighbor neighbors) {
             this.name = name;
             this.adjList = neighbors;
-    }
+            this.school = school; 
+            }
 }
  
 /**
@@ -33,14 +36,20 @@ public class Friends {
     public Friends(String file) throws FileNotFoundException {
          
         Scanner sc = new Scanner(new File(file));
-         
-        String graphType = sc.next();
-         
-        adjLists = new Vertex[sc.nextInt()];
+                  
+        adjLists = new Vertex[sc.nextInt()];//instantiate the array
  
         // read vertices
         for (int v=0; v < adjLists.length; v++) {
-            adjLists[v] = new Vertex(sc.next(), null);
+        	String holdLine =  sc.next(); //Hold the entire line
+        	int lineLocation = holdLine.indexOf('|'); //index of the | in the line
+        	if(holdLine.charAt(lineLocation+1) == 'y'){
+        		adjLists[v] = new Vertex(holdLine.substring(0, lineLocation), holdLine.substring(lineLocation+2, holdLine.length()), null);
+        	}
+        	else
+        	{
+        		adjLists[v] = new Vertex(holdLine.substring(0, lineLocation),"", null);
+        	}
         }
  
         // read edges
@@ -85,12 +94,14 @@ public class Friends {
     throws IOException {
         // TODO Auto-generated method stub
         Scanner sc = new Scanner(System.in);
-        System.out.print("Enter graph input file name: ");
-        String file = sc.nextLine();
+        //System.out.print("Enter graph input file name: ");
+        //String file = sc.nextLine();
+        String file = "test1";
         Friends graph = new Friends(file);
         graph.print();
  
     }
  
 }
+
 
