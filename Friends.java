@@ -42,10 +42,10 @@ public class Friends {
         // read vertices
         for (int v=0; v < adjLists.length; v++) {
         	String holdLine =  sc.nextLine(); //Hold the entire line
-        	System.out.println("this is " + holdLine);
         	int lineLocation = holdLine.indexOf('|'); //index of the | in the line
         	if(holdLine.charAt(lineLocation+1) == 'y'){
         		adjLists[v] = new Vertex(holdLine.substring(0, lineLocation), holdLine.substring(lineLocation+1, holdLine.length()), null);
+        		System.out.println();
         	}
         	else
         	{
@@ -54,9 +54,10 @@ public class Friends {
         }
  
         // read edges
-        sc.useDelimiter("|");//change delimiter to |
-        while (sc.hasNext()) {
-             
+        //System.out.println(sc.next());
+        //change delimiter to |
+        while (sc.hasNextLine()) {
+        	sc.useDelimiter("[|\n]");
             // read vertex names and translate to vertex numbers
             int v1 = indexForName(sc.next());
             int v2 = indexForName(sc.next());
@@ -105,6 +106,7 @@ public class Friends {
     }
  
 }
+
 
 
 
