@@ -1,5 +1,5 @@
 package graphs;
- 
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -26,19 +26,15 @@ class Vertex {
 /**
  * @author Sesh Venugopal. May 31, 2013.
  */
-public class Graph {
+public class Friends {
  
     Vertex[] adjLists;
      
-    public Graph(String file) throws FileNotFoundException {
+    public Friends(String file) throws FileNotFoundException {
          
         Scanner sc = new Scanner(new File(file));
          
         String graphType = sc.next();
-        boolean undirected=true;
-        if (graphType.equals("directed")) {
-            undirected=false;
-        }
          
         adjLists = new Vertex[sc.nextInt()];
  
@@ -57,9 +53,8 @@ public class Graph {
             // add v2 to front of v1's adjacency list and
             // add v1 to front of v2's adjacency list
             adjLists[v1].adjList = new Neighbor(v2, adjLists[v1].adjList);
-            if (undirected) {
-                adjLists[v2].adjList = new Neighbor(v1, adjLists[v2].adjList);
-            }
+            adjLists[v2].adjList = new Neighbor(v1, adjLists[v2].adjList);
+            
         }
     }
      
@@ -92,9 +87,10 @@ public class Graph {
         Scanner sc = new Scanner(System.in);
         System.out.print("Enter graph input file name: ");
         String file = sc.nextLine();
-        Graph graph = new Graph(file);
+        Friends graph = new Friends(file);
         graph.print();
  
     }
  
 }
+
