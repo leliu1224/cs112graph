@@ -49,7 +49,7 @@ public class Friends {
         	}
         	else
         	{
-        		adjLists[v] = new Vertex(holdLine.substring(0, lineLocation),"", null);
+        		adjLists[v] = new Vertex(holdLine.substring(0, lineLocation),"", null);// not students
         	}
         }
  
@@ -57,7 +57,7 @@ public class Friends {
         //System.out.println(sc.next());
         //change delimiter to |
         while (sc.hasNextLine()) {
-        	sc.useDelimiter("[|\n]");
+        	   sc.useDelimiter("[|\n]");//set delimiter to both | and spaces
             // read vertex names and translate to vertex numbers
             int v1 = indexForName(sc.next());
             int v2 = indexForName(sc.next());
@@ -99,7 +99,7 @@ public class Friends {
         Scanner sc = new Scanner(System.in);
         //System.out.print("Enter graph input file name: ");
         //String file = sc.nextLine();
-        String file = "test2";
+        String file = "test2";// you might have to make you own file for testing 
         Friends graph = new Friends(file);
         graph.print();
  
