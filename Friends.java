@@ -89,23 +89,17 @@ public class Friends {
     }
      
     
-    /*
     public void IntroChain (String start, String end){
     	return;
     }
-     */
     
-    /*
     public void Clique (String school){
     	return;
     }
-     */
     
-    /*
     public void Connect (){
     	return;
     }
-     */
     
     /**
      * @param args
@@ -117,30 +111,29 @@ public class Friends {
         String file = sc.nextLine();
         Friends graph = new Friends(file);
         graph.print();
-        /*
         System.out.println("Choose an algorithm: Shortest Chain (s), Cliques at School (cl), connectors (con), quit (q)");
         	String algo = sc.nextLine();
-        	while (!algo.equalsIgnoreCase("s") || !algo.equalsIgnoreCase("cl") || !algo.equalsIgnoreCase("con") || !algo.equalsIgnoreCase("q")){
+        	while (!algo.equalsIgnoreCase("s") && !algo.equalsIgnoreCase("cl") && !algo.equalsIgnoreCase("con") && !algo.equalsIgnoreCase("q")){
         		System.out.println("Choose an algorithm: Shortest Chain (s), Cliques at School (cl), connectors (con), quit (q)");
-        		String algo = sc.nextLine();
+        		algo = sc.nextLine();
         	}
-        	if (algo.equals("s")){
+        	if (algo.equalsIgnoreCase("s")){
         		System.out.println("Enter name of first person: ");
         		String start = sc.nextLine();
         		System.out.println("Enter name of second person: ");
         		String end = sc.nextLine();
         		graph.IntroChain(start, end);
-        	} else if (algo.equals("cl");
+        	} else if (algo.equalsIgnoreCase("cl")){
         		System.out.println("Enter name of school: ");
         		String school = sc.nextLine();
         		graph.Clique(school);
-        	} else if (algo.equals("con");
+        	} else if (algo.equalsIgnoreCase("con")){
         		graph.Connect();
         	} else {
         		sc.close();
         		return;
         	}
-    	*/
+        	sc.close();
     }
  
 }
