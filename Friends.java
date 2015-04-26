@@ -18,6 +18,8 @@ class Vertex {
     String name;
     String school;//add school variable for students
     Neighbor adjList;
+    int dist;
+	   Vertex path;
     
     Vertex(String name, String school, Neighbor neighbors) {
             this.name = name;
@@ -89,7 +91,50 @@ public class Friends {
     }
      
     
-    public void IntroChain (String start, String end){
+public void IntroChain (String start, String end){ // not tested, might break
+    	Vertex s = null;
+    	Queue<Vertex> q = null;
+    	for(int v = 0; v < adjLists.length; v++){
+    		if(adjLists[v].name.equals(start)){
+    			s = adjLists[v];//set the starting point
+    		}
+    		adjLists[v].dist =  (int) Math.pow(adjLists.length, 3) + 1;//set distance to a high number
+    	}
+    	s.dist = 0; //set the starting distance
+    	q.add(s);
+    	while(!q.isEmpty()){
+    		Vertex v = q.remove();
+            for (Neighbor w=v.adjList; w != null;w=w.next) {
+                System.out.print(" --> " + adjLists[w.vertexNum].name);
+                if(adjLists[w.vertexNum].dist >= Math.pow(adjLists.length, 3)+1){
+                	adjLists[w.vertexNum].dist = v.dist+1;
+                	adjLists[w.vertexNum].path = v;
+                	q.add(adjLists[w.vertexNum]);
+                }
+            }
+    	}
+    	for(int v = 0; v < adjLists.length; v++){
+    		
+    		if(adjLists[v].name.equals(end)){
+    			Stack<String> pathArray = null;
+    			pathArray.push(adjLists[v].name);
+    			while(adjLists[v].path != null){
+    				pathArray.push(adjLists[v].path.name);
+    				adjLists[v].path = adjLists[v].path.path;
+    			}
+    			if(pathArray.size() == 1){
+    				System.out.println("There is no way to reach " + end + " from " + start);
+    			}
+    			else{
+    				while(!pathArray.isEmpty()){
+    					System.out.println("The shortest path from " + start + " to " + end +" is:");
+    					System.out.print(pathArray.pop());
+    					System.out.print(" --> " + pathArray.pop());
+    				}
+    			}
+    			break;
+    		}
+    	}  	
     	return;
     }
     
