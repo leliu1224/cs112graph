@@ -26,9 +26,6 @@ class Vertex {
             }
 }
  
-/**
- * @author Sesh Venugopal. May 31, 2013.
- */
 public class Friends {
  
     Vertex[] adjLists;
@@ -44,12 +41,12 @@ public class Friends {
         	String holdLine =  sc.nextLine(); //Hold the entire line
         	int lineLocation = holdLine.indexOf('|'); //index of the | in the line
         	if(holdLine.charAt(lineLocation+1) == 'y'){
-        		adjLists[v] = new Vertex(holdLine.substring(0, lineLocation), holdLine.substring(lineLocation+1, holdLine.length()), null);
+        		adjLists[v] = new Vertex(holdLine.substring(0, lineLocation-1), holdLine.substring(lineLocation+2, holdLine.length()), null);
         		System.out.println();
         	}
         	else
         	{
-        		adjLists[v] = new Vertex(holdLine.substring(0, lineLocation),"", null);// not students
+        		adjLists[v] = new Vertex(holdLine.substring(0, lineLocation-1),"", null);// not students
         	}
         }
  
@@ -57,7 +54,7 @@ public class Friends {
         //System.out.println(sc.next());
         //change delimiter to |
         while (sc.hasNextLine()) {
-        	   sc.useDelimiter("[|\n]");//set delimiter to both | and spaces
+        	   sc.useDelimiter("|");//set delimiter to both | and spaces
             // read vertex names and translate to vertex numbers
             int v1 = indexForName(sc.next());
             int v2 = indexForName(sc.next());
@@ -97,16 +94,11 @@ public class Friends {
     throws IOException {
         // TODO Auto-generated method stub
         Scanner sc = new Scanner(System.in);
-        //System.out.print("Enter graph input file name: ");
-        //String file = sc.nextLine();
-        String file = "test2";// you might have to make you own file for testing 
+        System.out.print("Enter graph input file name: ");
+        String file = sc.nextLine();
         Friends graph = new Friends(file);
         graph.print();
  
     }
  
 }
-
-
-
-
