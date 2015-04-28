@@ -3,7 +3,10 @@ package graphs;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Scanner;
+import java.util.Stack;
  
 class Neighbor {
     public int vertexNum;
@@ -19,7 +22,7 @@ class Vertex {
     String school;//add school variable for students
     Neighbor adjList;
     int dist;
-	   Vertex path;
+	Vertex path;
     
     Vertex(String name, String school, Neighbor neighbors) {
             this.name = name;
@@ -28,6 +31,9 @@ class Vertex {
             }
 }
  
+/**
+ * @author Sesh Venugopal. May 31, 2013.
+ */
 public class Friends {
  
     Vertex[] adjLists;
@@ -43,12 +49,11 @@ public class Friends {
         	String holdLine =  sc.nextLine(); //Hold the entire line
         	int lineLocation = holdLine.indexOf('|'); //index of the | in the line
         	if(holdLine.charAt(lineLocation+1) == 'y'){
-        		adjLists[v] = new Vertex(holdLine.substring(0, lineLocation-1), holdLine.substring(lineLocation+2, holdLine.length()), null);
-        		System.out.println();
+        		adjLists[v] = new Vertex(holdLine.substring(0, lineLocation), holdLine.substring(lineLocation+3, holdLine.length()), null);
         	}
         	else
         	{
-        		adjLists[v] = new Vertex(holdLine.substring(0, lineLocation-1),"", null);// not students
+        		adjLists[v] = new Vertex(holdLine.substring(0, lineLocation),"", null);
         	}
         }
  
@@ -56,7 +61,7 @@ public class Friends {
         //System.out.println(sc.next());
         //change delimiter to |
         while (sc.hasNextLine()) {
-        	   sc.useDelimiter("|");//set delimiter to both | and spaces
+        	sc.useDelimiter("[|\n]");
             // read vertex names and translate to vertex numbers
             int v1 = indexForName(sc.next());
             int v2 = indexForName(sc.next());
@@ -67,7 +72,6 @@ public class Friends {
             adjLists[v2].adjList = new Neighbor(v1, adjLists[v2].adjList);
             
         }
-        sc.close();
     }
      
     int indexForName(String name) {
@@ -89,11 +93,9 @@ public class Friends {
             System.out.println("\n");
         }
     }
-     
-    
-public void IntroChain (String start, String end){ // not tested, might break
+    public void IntroChain (String start, String end){
     	Vertex s = null;
-    	Queue<Vertex> q = null;
+    	Queue<Vertex> q = new LinkedList<Vertex>();
     	for(int v = 0; v < adjLists.length; v++){
     		if(adjLists[v].name.equals(start)){
     			s = adjLists[v];//set the starting point
@@ -105,7 +107,7 @@ public void IntroChain (String start, String end){ // not tested, might break
     	while(!q.isEmpty()){
     		Vertex v = q.remove();
             for (Neighbor w=v.adjList; w != null;w=w.next) {
-                System.out.print(" --> " + adjLists[w.vertexNum].name);
+                System.out.println(" --> " + adjLists[w.vertexNum].name);
                 if(adjLists[w.vertexNum].dist >= Math.pow(adjLists.length, 3)+1){
                 	adjLists[w.vertexNum].dist = v.dist+1;
                 	adjLists[w.vertexNum].path = v;
@@ -116,7 +118,7 @@ public void IntroChain (String start, String end){ // not tested, might break
     	for(int v = 0; v < adjLists.length; v++){
     		
     		if(adjLists[v].name.equals(end)){
-    			Stack<String> pathArray = null;
+    			Stack<String> pathArray = new Stack<String>();
     			pathArray.push(adjLists[v].name);
     			while(adjLists[v].path != null){
     				pathArray.push(adjLists[v].path.name);
@@ -126,9 +128,9 @@ public void IntroChain (String start, String end){ // not tested, might break
     				System.out.println("There is no way to reach " + end + " from " + start);
     			}
     			else{
-    				while(!pathArray.isEmpty()){
-    					System.out.println("The shortest path from " + start + " to " + end +" is:");
-    					System.out.print(pathArray.pop());
+    				System.out.println("The shortest path from " + start + " to " + end +" is:");
+    				System.out.print(pathArray.pop());
+    				while(!pathArray.isEmpty()){ 					
     					System.out.print(" --> " + pathArray.pop());
     				}
     			}
