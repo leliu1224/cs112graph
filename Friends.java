@@ -164,45 +164,63 @@ public class Friends {
     	return;
     }
     
-    public void Clique (String school){
+        public void Clique (String school){
+    	
+    	for(int v=0; v < adjLists.length; v++){
+    		if(!adjLists[v].school.equals(school)){
+    			adjLists[v] = null;
+    		}
+    	}
+    
+    	ArrayList<Vertex[]> group = new ArrayList<Vertex[]>();
+        for(int v=0; v < adjLists.length; v++){
         	
-            for(int v=0; v < adjLists.length; v++){
-            	if(!adjLists[v].marked){
-            		if(adjLists[v].school.equalsIgnoreCase(school)){
-            			System.out.println("Clique");
-            		}
-            		dfsClique(adjLists, v, school);
-            		System.out.println();
-            	}
-            	
-            }
-            
-            for (int x =0; x <adjLists.length; x++){
-        		if (adjLists[x].marked == true){
-        			break;
-        		} else if (x==(adjLists.length-1) &&  (adjLists[x].marked == false)){
-        			System.out.println("Invalid input: there are no cliques for this school");
-        		}
+        	if(adjLists[v] != null && !adjLists[v].marked){
+        		Vertex[] clique = new Vertex[adjLists.length];
+        		group.add(clique);
+        		dfsClique(adjLists, v, clique);
         	}
+        }
+    	for (int i = 0; i < group.size(); i++) {
+			Vertex[] test = group.get(i);
+			System.out.println("Clique " + (i + 1 ));
+			cliquePrint(test);
+		}
+        
     }
-    		
-            private void dfsClique(Vertex[] G, int v, String school) {
-            	//System.out.println("Processing " + adjLists[v].name);
-                
-                if(adjLists[v].school.equalsIgnoreCase(school)){
-                	adjLists[v].marked = true;
-                	System.out.print(adjLists[v].name + ",");
-                }
-                else{
-                	return;
-                }
-                for (Neighbor w=adjLists[v].adjList; w != null;w=w.next) {
-                	
-                    if (!adjLists[w.vertexNum].marked) {
-                        dfsClique(G, w.vertexNum, school);            
-                    }
-                }
+        
+        private void dfsClique(Vertex[] G, int v, Vertex[] clique) {
+        	//System.out.println("Processing " + adjLists[v].name);
+        	G[v].marked = true;
+        	clique[v] = G[v];
+            for (Neighbor w=G[v].adjList; w != null;w=w.next) {
+            	if(G[w.vertexNum] != null){
+	            	//System.out.println("testing " + G[w.vertexNum].name);
+	                if (!G[w.vertexNum].marked) {
+	                    dfsClique(G, w.vertexNum,clique);            
+	                }
+            	}
             }
+        }
+        
+        private void cliquePrint(Vertex[] clique) {
+            System.out.println();
+            for (int v=0; v < clique.length; v++) {
+            	if(clique[v] != null && !clique[v].printMark){
+	                System.out.print(clique[v].name);
+	                clique[v].printMark = true;
+		                for (Neighbor nbr=clique[v].adjList; nbr != null;nbr=nbr.next) {
+		                	if(clique[nbr.vertexNum] != null){
+		                		System.out.print(" -- " + clique[nbr.vertexNum].name);
+		                		clique[nbr.vertexNum].printMark = true;
+		                	}
+		                }
+	                
+	                System.out.println("\n");
+            
+            	}
+            }
+        }
             
     
     
