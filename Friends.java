@@ -1,5 +1,10 @@
 package graphs;
 
+/*
+ 	Le Liu
+ 	Joan Malasig
+ */
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -8,6 +13,8 @@ import java.util.Queue;
 import java.util.Scanner;
 import java.util.Stack;
  
+//all inputs are assumed to be case insensitive
+
 class Neighbor {
     public int vertexNum;
     public Neighbor next;
@@ -19,7 +26,7 @@ class Neighbor {
  
 class Vertex {
     String name;
-    String school;//add school variable for students
+    String school;
     Neighbor adjList;
     int dist;
 	Vertex path;
@@ -30,7 +37,7 @@ class Vertex {
             this.name = name;
             this.adjList = neighbors;
             this.school = school;
-            boolean marked = false;
+            //boolean marked = false;
             }
 }
  
@@ -75,11 +82,13 @@ public class Friends {
             adjLists[v2].adjList = new Neighbor(v1, adjLists[v2].adjList);
             
         }
+        
+        sc.close();
     }
      
     int indexForName(String name) {
         for (int v=0; v < adjLists.length; v++) {
-            if (adjLists[v].name.equals(name)) {
+            if (adjLists[v].name.equalsIgnoreCase(name)) {
                 return v;
             }
         }
@@ -97,10 +106,21 @@ public class Friends {
         }
     }
     public void IntroChain (String start, String end){
+    	
+    	if (indexForName(start)==-1 || indexForName(end)==-1){
+    		System.out.println("Invalid input: at least one of the names are not in the graph");
+    		return;
+    	}
+    	
+    	if (start.equalsIgnoreCase(end)){
+    		System.out.println("Invalid input: names are the same");
+    		return;
+    	}
+    	
     	Vertex s = null;
     	Queue<Vertex> q = new LinkedList<Vertex>();
     	for(int v = 0; v < adjLists.length; v++){
-    		if(adjLists[v].name.equals(start)){
+    		if(adjLists[v].name.equalsIgnoreCase(start)){
     			s = adjLists[v];//set the starting point
     		}
     		adjLists[v].dist =  (int) Math.pow(adjLists.length, 3) + 1;//set distance to a high number
@@ -110,7 +130,7 @@ public class Friends {
     	while(!q.isEmpty()){
     		Vertex v = q.remove();
             for (Neighbor w=v.adjList; w != null;w=w.next) {
-                System.out.println(" --> " + adjLists[w.vertexNum].name);
+                //System.out.println(" --> " + adjLists[w.vertexNum].name);
                 if(adjLists[w.vertexNum].dist >= Math.pow(adjLists.length, 3)+1){
                 	adjLists[w.vertexNum].dist = v.dist+1;
                 	adjLists[w.vertexNum].path = v;
@@ -120,7 +140,7 @@ public class Friends {
     	}
     	for(int v = 0; v < adjLists.length; v++){
     		
-    		if(adjLists[v].name.equals(end)){
+    		if(adjLists[v].name.equalsIgnoreCase(end)){
     			Stack<String> pathArray = new Stack<String>();
     			pathArray.push(adjLists[v].name);
     			while(adjLists[v].path != null){
@@ -136,6 +156,7 @@ public class Friends {
     				while(!pathArray.isEmpty()){ 					
     					System.out.print(" --> " + pathArray.pop());
     				}
+    				System.out.println();
     			}
     			break;
     		}
@@ -143,23 +164,74 @@ public class Friends {
     	return;
     }
     
-    public void findCollector() {
-        boolean[] collectorArray = new boolean[adjLists.length];
+    public void Clique (String school){
+        	
+            for(int v=0; v < adjLists.length; v++){
+            	if(!adjLists[v].marked){
+            		if(adjLists[v].school.equalsIgnoreCase(school)){
+            			System.out.println("Clique");
+            		}
+            		dfsClique(adjLists, v, school);
+            		System.out.println();
+            	}
+            	
+            }
+            
+            for (int x =0; x <adjLists.length; x++){
+        		if (adjLists[x].marked == true){
+        			break;
+        		} else if (x==(adjLists.length-1) &&  (adjLists[x].marked == false)){
+        			System.out.println("Invalid input: there are no cliques for this school");
+        		}
+        	}
+    }
+    		
+            private void dfsClique(Vertex[] G, int v, String school) {
+            	//System.out.println("Processing " + adjLists[v].name);
+                
+                if(adjLists[v].school.equalsIgnoreCase(school)){
+                	adjLists[v].marked = true;
+                	System.out.print(adjLists[v].name + ",");
+                }
+                else{
+                	return;
+                }
+                for (Neighbor w=adjLists[v].adjList; w != null;w=w.next) {
+                	
+                    if (!adjLists[w.vertexNum].marked) {
+                        dfsClique(G, w.vertexNum, school);            
+                    }
+                }
+            }
+            
+    
+    
+    public void findConnector() {
+        boolean[] connectorArray = new boolean[adjLists.length];
         for(int v=0; v < adjLists.length; v++){
         	if(!adjLists[v].marked){
-        		dfs(adjLists, v, collectorArray);
+        		dfs(adjLists, v, connectorArray);
         	}
         }
-        for(int i = 0; i<collectorArray.length; i++){
-        	if(collectorArray[i] == true)
-        	System.out.print(adjLists[i].name + " ,");
+        int count = 0;
+        for(int i = 0; i<connectorArray.length; i++){
+        	if(connectorArray[i] == true){
+        		if(count == 0){
+        			System.out.println("The connectors in the graph are:");
+        		}
+        		System.out.print(adjLists[i].name + ", ");
+        		count++;
+        	}
+        }
+        if (count == 0){
+        	System.out.println("There are no connectors in this graph");
         }
     }
 
     // depth first search from v
-    private void dfs(Vertex[] G, int v, boolean[] collectors) {
+    private void dfs(Vertex[] G, int v, boolean[] connectors) {
     	
-    	System.out.println("Processing " + adjLists[v].name);
+    	//System.out.println("Processing " + adjLists[v].name);
         adjLists[v].marked = true;
     	adjLists[v].dfsnum = dfsnumber;
     	dfsnumber++;
@@ -168,13 +240,13 @@ public class Friends {
         for (Neighbor w=adjLists[v].adjList; w != null;w=w.next) {
         	
             if (!adjLists[w.vertexNum].marked) {
-                dfs(G, w.vertexNum, collectors);
+                dfs(G, w.vertexNum, connectors);
                 if(adjLists[v].dfsnum > adjLists[w.vertexNum].back){
                 	adjLists[v].back = Math.min(adjLists[v].back, adjLists[w.vertexNum].back );
                 }
                 if(isConnector(adjLists[v], adjLists[w.vertexNum])){
-                	collectors[v] = true;
-                	System.out.println(adjLists[v].name);
+                	connectors[v] = true;
+                	//System.out.println(adjLists[v].name);
                 }
                 
             }
@@ -196,56 +268,41 @@ public class Friends {
     	}
     }
 
-    public void Clique (String school){
-    	
-        for(int v=0; v < adjLists.length; v++){
-        	if(!adjLists[v].marked){
-        		if(adjLists[v].school.equals(school)){
-        			System.out.println("Clique");
-        		}
-        		dfsClique(adjLists, v, school);
-        		System.out.println();
-        	
-        	}
-        	
-        }
-    }
-        
-        private void dfsClique(Vertex[] G, int v, String school) {
-        	//System.out.println("Processing " + adjLists[v].name);
-            adjLists[v].marked = true;
-            if(adjLists[v].school.equalsIgnoreCase(school)){
-            	
-            	System.out.print(adjLists[v].name + ",");
-            }
-            else{
-            	return;
-            }
-            for (Neighbor w=adjLists[v].adjList; w != null;w=w.next) {
-            	
-                if (!adjLists[w.vertexNum].marked) {
-                    dfsClique(G, w.vertexNum, school);            
-                }
-            }
-        }
-    	 
-
-
-	/**
-     * @param args
-     */
+     
+    
     public static void main(String[] args) 
     throws IOException {
-        // TODO Auto-generated method stub
         Scanner sc = new Scanner(System.in);
-        //System.out.print("Enter graph input file name: ");
-        //String file = sc.nextLine();
-        String file = "test1";
+        System.out.print("Enter graph input file name: ");
+        String file = sc.nextLine();
         Friends graph = new Friends(file);
         graph.print();
-        graph.Clique("rutgers");
-        //graph.IntroChain("f", "c");
-        //graph.findCollector();
+        System.out.println("Choose an algorithm: Shortest Chain (s), Cliques at School (cl), connectors (con), quit (q)");
+    	String algo = sc.nextLine();
+    	while (!algo.equalsIgnoreCase("q")){
+    		if (algo.equalsIgnoreCase("s")){
+	    		System.out.println("Enter name of first person: ");
+	    		String start = sc.nextLine();
+	    		System.out.println("Enter name of second person: ");
+	    		String end = sc.nextLine();
+	    		graph.IntroChain(start, end);
+	    	} else if (algo.equalsIgnoreCase("cl")){
+	    		System.out.println("Enter name of school: ");
+	    		String school = sc.nextLine();
+	    		graph.Clique(school);
+	    	} else if (algo.equalsIgnoreCase("con")){
+	    		graph.findConnector();
+	    	} else {
+	    		System.out.println("Choose an algorithm: Shortest Chain (s), Cliques at School (cl), connectors (con), quit (q)");
+    	    	algo = sc.nextLine();
+    	    	continue;
+	    	}
+	    	graph = new Friends(file);
+	    	System.out.println("Choose an algorithm: Shortest Chain (s), Cliques at School (cl), connectors (con), quit (q)");
+	    	algo = sc.nextLine();
+    	}
+    	sc.close();
+ 
     }
  
 }
