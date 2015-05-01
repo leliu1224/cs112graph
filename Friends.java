@@ -3,6 +3,7 @@ package graphs;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
@@ -25,6 +26,7 @@ class Vertex {
 	Vertex path;
 	boolean marked;
 	int dfsnum, back;
+	boolean printMark;
     
     Vertex(String name, String school, Neighbor neighbors) {
             this.name = name;
@@ -205,12 +207,15 @@ public class Friends {
     	}
     	
     	Vertex[] clique = new Vertex[adjLists.length];
+    	ArrayList<Vertex[]> group = new ArrayList<Vertex[]>();
         for(int v=0; v < adjLists.length; v++){
         	if(adjLists[v] != null && !adjLists[v].marked){
-        		dfsClique(adjLists, v, clique);        	
+        		dfsClique(adjLists, v, clique);
+        		System.out.println("Clique");
+        		cliquePrint(clique);	
         	}
         }
-        cliquePrint(clique);
+        
     }
         
         private void dfsClique(Vertex[] G, int v, Vertex[] clique) {
@@ -219,7 +224,7 @@ public class Friends {
         	clique[v] = G[v];
             for (Neighbor w=G[v].adjList; w != null;w=w.next) {
             	if(G[w.vertexNum] != null){
-	            	System.out.println("testing " + G[w.vertexNum].name);
+	            	//System.out.println("testing " + G[w.vertexNum].name);
 	                if (!G[w.vertexNum].marked) {
 	                    dfsClique(G, w.vertexNum,clique);            
 	                }
@@ -230,10 +235,14 @@ public class Friends {
         private void cliquePrint(Vertex[] clique) {
             System.out.println();
             for (int v=0; v < clique.length; v++) {
-            	if(clique[v] != null){
+            	if(clique[v] != null && !clique[v].printMark){
 	                System.out.print(clique[v].name);
+	                clique[v].printMark = true;
 		                for (Neighbor nbr=clique[v].adjList; nbr != null;nbr=nbr.next) {
-		                    System.out.print(" --> " + clique[nbr.vertexNum].name);
+		                	if(clique[nbr.vertexNum] != null){
+		                		System.out.print(" -- " + clique[nbr.vertexNum].name);
+		                		clique[nbr.vertexNum].printMark = true;
+		                	}
 		                }
 	                
 	                System.out.println("\n");
@@ -256,7 +265,7 @@ public class Friends {
         String file = "test1";
         Friends graph = new Friends(file);
         graph.print();
-        //graph.Clique("rutgers");
+        graph.Clique("rutgers");
         //graph.IntroChain("heather", "samir");
         //graph.findCollector();
     }
