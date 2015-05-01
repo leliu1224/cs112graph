@@ -8,6 +8,7 @@ package graphs;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
@@ -32,6 +33,7 @@ class Vertex {
 	Vertex path;
 	boolean marked;
 	int dfsnum, back;
+	boolean printMark;
     
     Vertex(String name, String school, Neighbor neighbors) {
             this.name = name;
