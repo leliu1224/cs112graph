@@ -25,6 +25,7 @@ class Vertex {
 	Vertex path;
 	boolean marked;
 	int dfsnum, back;
+	boolean visited;
     
     Vertex(String name, String school, Neighbor neighbors) {
             this.name = name;
@@ -33,10 +34,7 @@ class Vertex {
             boolean marked = false;
             }
 }
- 
-/**
- * @author Sesh Venugopal. May 31, 2013.
- */
+
 public class Friends {
 	
     int dfsnumber = 1;
@@ -197,24 +195,73 @@ public class Friends {
     		return false;
     	}
     }
-
-     
+    
+    public void Clique (String school){
+    	Queue<Vertex> q = new LinkedList<Vertex>();
+    	
+    	
+    	
+    	for(int v = 0; v < adjLists.length; v++){
+    		if(adjLists[v].school.equalsIgnoreCase(school) && adjLists[v].visited==false){
+    			q.add(adjLists[v]);
+    			adjLists[v].visited = true;
+    			for (Neighbor n=adjLists[v].adjList; n != null;n=n.next){
+    				if (adjLists[n.vertexNum].school == null || adjLists[n.vertexNum].school != school){
+    					break;
+    				} else {
+    					q.add(adjLists[n.vertexNum]);
+    					adjLists[n.vertexNum].visited = true; 
+    				}
+    			}
+    			while (!q.isEmpty()){
+    				System.out.print(q.remove() + "--");
+    			}
+    		}
+    	}
+    	
+    	for (int x =0; x <adjLists.length; x++){
+    		if (adjLists[x].visited == true){
+    			break;
+    		} else if (x==(adjLists.length-1) &&  (adjLists[x].visited == false)){
+    			System.out.println("There are no cliques for this school.");
+    		}
+    	}
+    	
+    }
+    
     /**
      * @param args
      */
     public static void main(String[] args) 
     throws IOException {
-        // TODO Auto-generated method stub
         Scanner sc = new Scanner(System.in);
-        //System.out.print("Enter graph input file name: ");
-        //String file = sc.nextLine();
-        String file = "test3";
+        System.out.print("Enter graph input file name: ");
+        String file = sc.nextLine();
         Friends graph = new Friends(file);
         graph.print();
-        //graph.IntroChain("nick", "heather");
-        graph.findCollector();
-        
- 
+        System.out.println("Choose an algorithm: Shortest Chain (s), Cliques at School (cl), connectors (con), quit (q)");
+        	String algo = sc.nextLine();
+        	while (!algo.equalsIgnoreCase("s") && !algo.equalsIgnoreCase("cl") && !algo.equalsIgnoreCase("con") && !algo.equalsIgnoreCase("q")){
+        		System.out.println("Choose an algorithm: Shortest Chain (s), Cliques at School (cl), connectors (con), quit (q)");
+        		algo = sc.nextLine();
+        	}
+        	if (algo.equalsIgnoreCase("s")){
+        		System.out.println("Enter name of first person: ");
+        		String start = sc.nextLine();
+        		System.out.println("Enter name of second person: ");
+        		String end = sc.nextLine();
+        		graph.IntroChain(start, end);
+        	} else if (algo.equalsIgnoreCase("cl")){
+        		System.out.println("Enter name of school: ");
+        		String school = sc.nextLine();
+        		graph.Clique(school);
+        	} else if (algo.equalsIgnoreCase("con")){
+        		graph.findCollector();
+        	} else {
+        		sc.close();
+        		return;
+        	}
+        	sc.close();
     }
  
 }
