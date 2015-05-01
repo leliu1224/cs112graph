@@ -3,7 +3,10 @@ package graphs;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Scanner;
+import java.util.Stack;
  
 class Neighbor {
     public int vertexNum;
@@ -19,17 +22,25 @@ class Vertex {
     String school;//add school variable for students
     Neighbor adjList;
     int dist;
-	   Vertex path;
+	Vertex path;
+	boolean marked;
+	int dfsnum, back;
     
     Vertex(String name, String school, Neighbor neighbors) {
             this.name = name;
             this.adjList = neighbors;
-            this.school = school; 
+            this.school = school;
+            boolean marked = false;
             }
 }
  
+/**
+ * @author Sesh Venugopal. May 31, 2013.
+ */
 public class Friends {
- 
+	
+    int dfsnumber = 1;
+    int backnumber = 1;
     Vertex[] adjLists;
      
     public Friends(String file) throws FileNotFoundException {
@@ -43,12 +54,11 @@ public class Friends {
         	String holdLine =  sc.nextLine(); //Hold the entire line
         	int lineLocation = holdLine.indexOf('|'); //index of the | in the line
         	if(holdLine.charAt(lineLocation+1) == 'y'){
-        		adjLists[v] = new Vertex(holdLine.substring(0, lineLocation-1), holdLine.substring(lineLocation+2, holdLine.length()), null);
-        		System.out.println();
+        		adjLists[v] = new Vertex(holdLine.substring(0, lineLocation), holdLine.substring(lineLocation+3, holdLine.length()), null);
         	}
         	else
         	{
-        		adjLists[v] = new Vertex(holdLine.substring(0, lineLocation-1),"", null);// not students
+        		adjLists[v] = new Vertex(holdLine.substring(0, lineLocation),"", null);
         	}
         }
  
@@ -56,7 +66,7 @@ public class Friends {
         //System.out.println(sc.next());
         //change delimiter to |
         while (sc.hasNextLine()) {
-        	   sc.useDelimiter("|");//set delimiter to both | and spaces
+        	sc.useDelimiter("[|\n]");
             // read vertex names and translate to vertex numbers
             int v1 = indexForName(sc.next());
             int v2 = indexForName(sc.next());
@@ -67,7 +77,6 @@ public class Friends {
             adjLists[v2].adjList = new Neighbor(v1, adjLists[v2].adjList);
             
         }
-        sc.close();
     }
      
     int indexForName(String name) {
@@ -89,11 +98,9 @@ public class Friends {
             System.out.println("\n");
         }
     }
-     
-    
-public void IntroChain (String start, String end){ // not tested, might break
+    public void IntroChain (String start, String end){
     	Vertex s = null;
-    	Queue<Vertex> q = null;
+    	Queue<Vertex> q = new LinkedList<Vertex>();
     	for(int v = 0; v < adjLists.length; v++){
     		if(adjLists[v].name.equals(start)){
     			s = adjLists[v];//set the starting point
@@ -105,7 +112,7 @@ public void IntroChain (String start, String end){ // not tested, might break
     	while(!q.isEmpty()){
     		Vertex v = q.remove();
             for (Neighbor w=v.adjList; w != null;w=w.next) {
-                System.out.print(" --> " + adjLists[w.vertexNum].name);
+                System.out.println(" --> " + adjLists[w.vertexNum].name);
                 if(adjLists[w.vertexNum].dist >= Math.pow(adjLists.length, 3)+1){
                 	adjLists[w.vertexNum].dist = v.dist+1;
                 	adjLists[w.vertexNum].path = v;
@@ -116,7 +123,7 @@ public void IntroChain (String start, String end){ // not tested, might break
     	for(int v = 0; v < adjLists.length; v++){
     		
     		if(adjLists[v].name.equals(end)){
-    			Stack<String> pathArray = null;
+    			Stack<String> pathArray = new Stack<String>();
     			pathArray.push(adjLists[v].name);
     			while(adjLists[v].path != null){
     				pathArray.push(adjLists[v].path.name);
@@ -126,9 +133,9 @@ public void IntroChain (String start, String end){ // not tested, might break
     				System.out.println("There is no way to reach " + end + " from " + start);
     			}
     			else{
-    				while(!pathArray.isEmpty()){
-    					System.out.println("The shortest path from " + start + " to " + end +" is:");
-    					System.out.print(pathArray.pop());
+    				System.out.println("The shortest path from " + start + " to " + end +" is:");
+    				System.out.print(pathArray.pop());
+    				while(!pathArray.isEmpty()){ 					
     					System.out.print(" --> " + pathArray.pop());
     				}
     			}
@@ -138,47 +145,76 @@ public void IntroChain (String start, String end){ // not tested, might break
     	return;
     }
     
-    public void Clique (String school){
-    	return;
+    public void findCollector() {
+        boolean[] collectorArray = new boolean[adjLists.length];
+        for(int v=0; v < adjLists.length; v++){
+        	if(!adjLists[v].marked){
+        		dfs(adjLists, v, collectorArray);
+        	}
+        }
+        for(int i = 0; i<collectorArray.length; i++){
+        	if(collectorArray[i] == true)
+        	System.out.print(adjLists[i].name + " ,");
+        }
+    }
+
+    // depth first search from v
+    private void dfs(Vertex[] G, int v, boolean[] collectors) {
+    	
+    	System.out.println("Processing " + adjLists[v].name);
+        adjLists[v].marked = true;
+    	adjLists[v].dfsnum = dfsnumber;
+    	dfsnumber++;
+    	adjLists[v].back = backnumber;
+    	backnumber++;
+        for (Neighbor w=adjLists[v].adjList; w != null;w=w.next) {
+        	
+            if (!adjLists[w.vertexNum].marked) {
+                dfs(G, w.vertexNum, collectors);
+                if(adjLists[v].dfsnum > adjLists[w.vertexNum].back){
+                	adjLists[v].back = Math.min(adjLists[v].back, adjLists[w.vertexNum].back );
+                }
+                if(isConnector(adjLists[v], adjLists[w.vertexNum])){
+                	collectors[v] = true;
+                	System.out.println(adjLists[v].name);
+                }
+                
+            }
+            else{
+            	adjLists[v].back = Math.min(adjLists[v].back, adjLists[w.vertexNum].dfsnum );
+            }
+        }
     }
     
-    public void Connect (){
-    	return;
+    private boolean isConnector(Vertex v, Vertex w){
+    	if(v.dfsnum <= w.back && v.dfsnum != 1){
+    		return true;
+    	}
+//    	if(v.dfsnum == 1 && v.adjList.next == null){
+//    		return true;
+//    	}
+    	else{
+    		return false;
+    	}
     }
-    
+
+     
     /**
      * @param args
      */
     public static void main(String[] args) 
     throws IOException {
+        // TODO Auto-generated method stub
         Scanner sc = new Scanner(System.in);
-        System.out.print("Enter graph input file name: ");
-        String file = sc.nextLine();
+        //System.out.print("Enter graph input file name: ");
+        //String file = sc.nextLine();
+        String file = "test3";
         Friends graph = new Friends(file);
         graph.print();
-        System.out.println("Choose an algorithm: Shortest Chain (s), Cliques at School (cl), connectors (con), quit (q)");
-        	String algo = sc.nextLine();
-        	while (!algo.equalsIgnoreCase("s") && !algo.equalsIgnoreCase("cl") && !algo.equalsIgnoreCase("con") && !algo.equalsIgnoreCase("q")){
-        		System.out.println("Choose an algorithm: Shortest Chain (s), Cliques at School (cl), connectors (con), quit (q)");
-        		algo = sc.nextLine();
-        	}
-        	if (algo.equalsIgnoreCase("s")){
-        		System.out.println("Enter name of first person: ");
-        		String start = sc.nextLine();
-        		System.out.println("Enter name of second person: ");
-        		String end = sc.nextLine();
-        		graph.IntroChain(start, end);
-        	} else if (algo.equalsIgnoreCase("cl")){
-        		System.out.println("Enter name of school: ");
-        		String school = sc.nextLine();
-        		graph.Clique(school);
-        	} else if (algo.equalsIgnoreCase("con")){
-        		graph.Connect();
-        	} else {
-        		sc.close();
-        		return;
-        	}
-        	sc.close();
+        //graph.IntroChain("nick", "heather");
+        graph.findCollector();
+        
+ 
     }
  
 }
