@@ -234,34 +234,36 @@ public class Friends {
      */
     public static void main(String[] args) 
     throws IOException {
+        // TODO Auto-generated method stub
         Scanner sc = new Scanner(System.in);
         System.out.print("Enter graph input file name: ");
         String file = sc.nextLine();
         Friends graph = new Friends(file);
         graph.print();
         System.out.println("Choose an algorithm: Shortest Chain (s), Cliques at School (cl), connectors (con), quit (q)");
-        	String algo = sc.nextLine();
-        	while (!algo.equalsIgnoreCase("s") && !algo.equalsIgnoreCase("cl") && !algo.equalsIgnoreCase("con") && !algo.equalsIgnoreCase("q")){
-        		System.out.println("Choose an algorithm: Shortest Chain (s), Cliques at School (cl), connectors (con), quit (q)");
-        		algo = sc.nextLine();
-        	}
-        	if (algo.equalsIgnoreCase("s")){
-        		System.out.println("Enter name of first person: ");
-        		String start = sc.nextLine();
-        		System.out.println("Enter name of second person: ");
-        		String end = sc.nextLine();
-        		graph.IntroChain(start, end);
-        	} else if (algo.equalsIgnoreCase("cl")){
-        		System.out.println("Enter name of school: ");
-        		String school = sc.nextLine();
-        		graph.Clique(school);
-        	} else if (algo.equalsIgnoreCase("con")){
-        		graph.findCollector();
-        	} else {
-        		sc.close();
-        		return;
-        	}
-        	sc.close();
+    	String algo = sc.nextLine();
+    	while (!algo.equalsIgnoreCase("s") && !algo.equalsIgnoreCase("cl") && !algo.equalsIgnoreCase("con") && !algo.equalsIgnoreCase("q")){
+    		System.out.println("Choose an algorithm: Shortest Chain (s), Cliques at School (cl), connectors (con), quit (q)");
+    		algo = sc.nextLine();
+    	}
+    	if (algo.equalsIgnoreCase("s")){
+    		System.out.println("Enter name of first person: ");
+    		String start = sc.nextLine();
+    		System.out.println("Enter name of second person: ");
+    		String end = sc.nextLine();
+    		graph.IntroChain(start, end);
+    	} else if (algo.equalsIgnoreCase("cl")){
+    		System.out.println("Enter name of school: ");
+    		String school = sc.nextLine();
+    		//graph.Clique(school);
+    	} else if (algo.equalsIgnoreCase("con")){
+    		graph.findCollector();
+    	} else {
+    		sc.close();
+    		return;
+    	}
+    	sc.close();
+ 
     }
  
 }
