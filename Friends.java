@@ -95,7 +95,16 @@ public class Friends {
             }
         }
         return -1;
-    }   
+    }
+    
+    int indexForSchool(String school) {
+        for (int v=0; v < adjLists.length; v++) {
+            if (adjLists[v].school.equalsIgnoreCase(school)) {
+                return v;
+            }
+        }
+        return -1;
+    } 
      
     public void print() {
         System.out.println();
@@ -166,10 +175,15 @@ public class Friends {
     	return;
     }
     
-        public void Clique (String school){
+    
+public void Clique (String school){
+	
+	if (indexForSchool(school)==-1){
+    	System.out.println("Invalid input: no students in the graph go to this school");
+    }
     	
     	for(int v=0; v < adjLists.length; v++){
-    		if(!adjLists[v].school.equals(school)){
+    		if(!adjLists[v].school.equalsIgnoreCase(school)){
     			adjLists[v] = null;
     		}
     	}
@@ -243,6 +257,7 @@ public class Friends {
         		count++;
         	}
         }
+        System.out.println();
         if (count == 0){
         	System.out.println("There are no connectors in this graph");
         }
